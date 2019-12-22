@@ -21,13 +21,13 @@ There are 4 parameters that can be passed to the ItemBuilder constructor. These 
 
 `options` *(object) (optional, nullable)* - additional options for further customization of the ItemStack. Valid options:
 
-    `amount` *(int)* - amount of the item in the ItemStack.
+    amount (int) - amount of the item in the ItemStack.
   
-    `durability` *(int)* - durability value of the item.
+    durability (int) - durability value of the item.
   
-    `enchantments` *(array)* - an array containing enchantments to apply to the item. Covered in more detail later.
+    enchantments (array) - an array containing enchantments to apply to the item. Covered in more detail later.
   
-    `flags` *(array)* - an array containing item flags to apply to the item. Covered in more detail later.
+    flags (array) - an array containing item flags to apply to the item. Covered in more detail later.
 
 Let's start out simple, and create a diamond sword named "OP Sword", with lore.
 
