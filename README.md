@@ -125,6 +125,6 @@ There are 6 methods that can be used on the GUIManager object. These are:
 
 ## ItemUtils divides its GUIs into two types:
 
-**Temporary:** a temporary GUI is created when it is displayed to a player, when needed to be displayed to the player, and is then deleted as soon as the player exits the GUI. Temporary GUIs are recommended for dynamic GUIs, example a stats menu.
+**Temporary:** a temporary GUI is created when it is displayed to a player, and is then deleted as soon as the player exits the GUI. Temporary GUIs are recommended for dynamic GUIs, example a stats menu.
 
 **Global:** a global GUI is created and then stored in memory, tracked by an ID. As many players can be viewing a global GUI at the same time as you want. Global GUIs are only deleted if the `deleteGlobalMenu` method is called to remove it. Global GUIs are recommended for static GUIs, example a shop or a help menu.
