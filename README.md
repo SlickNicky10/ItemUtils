@@ -76,3 +76,4 @@ const item = new ItemBuilder("DIAMOND_SWORD", "OP Sword", [color("&aA very stron
 });
 ```
 
+A full list of item flags can be found here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemFlag.html
