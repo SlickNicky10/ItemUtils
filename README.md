@@ -86,7 +86,7 @@ There are 4 parameters that can be passed to the InventoryBuilder constructor. T
 
 `rows` *(int)* - the amount of rows the inventory will have.
 
-`name` *(string, nullable)* - a custom name for the inventory.
+`name` *(string) (nullable)* - a custom name for the inventory.
 
 `items` *(object)* - an object containing items to use in the inventory.
 
@@ -109,7 +109,7 @@ In this example, the "prize" will appear in the middle slot, and every other slo
 
 # How to use GUIManager
 
-There are 6 methods that can be used on the GUIManager object. These are:
+There are 7 methods that can be used on the GUIManager object. These are:
 
 `displayTemporaryMenu(player, view, actions, options)` - displays a temporary menu to the player.
 
@@ -123,8 +123,39 @@ There are 6 methods that can be used on the GUIManager object. These are:
 
 `setGlobalAction(action)` - sets the global action that will be executed any time a player performs an ItemUtils GUI action.
 
+`createViewFromTemplate(id, name, items)` - creates an inventory from a GUI template, which was declared in the ItemUtils config. **This method will only become available once the `templates` field is created in the ItemUtils config** *(plugins/Drupi/ItemUtils.yml)*
+
 ## ItemUtils divides its GUIs into two types:
 
 **Temporary:** a temporary GUI is created when it is displayed to a player, and is then deleted as soon as the player exits the GUI. Temporary GUIs are recommended for dynamic GUIs, example a stats menu.
 
 **Global:** a global GUI is created and then stored in memory, tracked by an ID. As many players can be viewing a global GUI at the same time as you want. Global GUIs are only deleted if the `deleteGlobalMenu` method is called to remove it. Global GUIs are recommended for static GUIs, example a shop or a help menu.
+
+Let's start with creating a simple, temporary GUI, that displays some simple information about the player.
+
+For the sake of these examples, let's assume that we don't want the player to be able to take any items out of the GUI, or put items in, so we will use the `setGlobalAction` method to do that.
+
+```js
+const ItemUtils = require("ItemUtils");
+const ItemBuilder = ItemUtils.ItemBuilder;
+const InventoryBuilder = ItemUtils.InventoryBuilder;
+const GUIManager = ItemUtils.GUIManager;
+
+GUIManager.setGlobalAction(event => {
+    event.setCancelled(true);
+});
+
+command.create("info", "test", sender => {
+    const player = cast.asPlayer(sender);
+    GUIManager.displayTemporaryMenu(player, new InventoryBuilder(3, color(`&9${player.getName()}'s Profile`), {
+        13: new ItemBuilder("NETHER_STAR", "Me!", [color(`&c❤ ${player.getHealth()} HP`), "Something else..."])
+    }), {
+        13: event => {
+            // player works because this is a temporary menu and can reference variables defined in the command before it.
+            player.sendMessage("Hi there!");
+        }
+    });
+});
+```
+
+This is a simple GUI, with a nether star in the middle slot that will display the player's current health, and when clicked on, will say hello to them in chat.
