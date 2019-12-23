@@ -159,3 +159,83 @@ command.create("info", "test", sender => {
 ```
 
 This is a simple GUI, with a nether star in the middle slot that will display the player's current health, and when clicked on, will say hello to them in chat.
+
+Now, let's try creating a simple shop using a global GUI. Our shop will only sell two items, not very impressive.
+
+```js
+const ItemUtils = require("ItemUtils");
+const ItemBuilder = ItemUtils.ItemBuilder;
+const InventoryBuilder = ItemUtils.InventoryBuilder;
+const GUIManager = ItemUtils.GUIManager;
+
+GUIManager.setGlobalAction(event => {
+    event.setCancelled(true);
+});
+
+GUIManager.createGlobalMenu("shop", new InventoryBuilder(1, color("&9Shop"), {
+    0: new ItemBuilder("DIAMOND", null, [color("&8Price: &716 Coal")]),
+    1: new ItemBuilder("GOLDEN_APPLE", null, [color("&8Price: &74 Emeralds")])
+}), {
+    0: event => {
+        const player = event.getWhoClicked();
+        const inventory = player.getInventory();
+        if(inventory.containsAtLeast(new ItemBuilder("COAL"), 16)){
+            inventory.removeItem(new ItemBuilder("COAL", null, null, {amount: 16}));
+            inventory.addItem(new ItemBuilder("DIAMOND"));
+        } else {
+            player.sendMessage(color("&cYou don't have enough Coal!"));
+        }
+    },
+    1: event => {
+        const player = event.getWhoClicked();
+        const inventory = player.getInventory();
+        if(inventory.containsAtLeast(new ItemBuilder("EMERALD"), 4)){
+            inventory.removeItem(new ItemBuilder("EMERALD", null, null, {amount: 4}));
+            inventory.addItem(new ItemBuilder("GOLDEN_APPLE"));
+        } else {
+            player.sendMessage(color("&cYou don't have enough Emeralds!"));
+        }
+    }
+});
+
+command.create("shop", "test", sender => {
+    GUIManager.displayGlobalMenu(cast.asPlayer(sender), "shop");
+});
+```
+
+When the script is loaded, our shop GUI is created, and all the command has to do is display it to players.
+
+## GUI Options
+
+ItemUtils GUIs can have additional options declared after declaring the GUI actions. These are:
+
+**globalAction**: A function that will be executed regardless of what GUI slot is clicked.
+
+**extraAction**: A function that will be executed after the clicked GUI slot's defined action is executed. Will only be called if that slot has an action declared.
+
+**fallbackAction**: A function that will be executed if the clicked GUI slot does not have an action defined.
+
+Syntax example:
+
+```js
+command.create("test", "test", sender => {
+    const player = cast.asPlayer(sender);
+    GUIManager.displayTemporaryMenu(player, new InventoryBuilder(1, "Test", {
+        4: new ItemBuilder("GOLD_INGOT", color("&6Yes"))
+    }, new ItemBuilder("IRON_INGOT", color("&fNo"))), {
+        4: () => {
+            player.sendMessage("Yes.");
+        }
+    }, {
+        globalAction: () => {
+            player.sendMessage("What will it be?");
+        },
+        extraAction: () => {
+            player.sendMessage("Yes again!");
+        },
+        fallbackAction: () => {
+            player.sendMessage("No.");
+        }
+    });
+});
+```
