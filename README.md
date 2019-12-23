@@ -107,6 +107,20 @@ const inventory = new InventoryBuilder(3, color("&eYou won a prize!"), {
 
 In this example, the "prize" will appear in the middle slot, and every other slot will contain diamond blocks instead of air.
 
+## Functions can also be passed as items
+
+An InventoryBuilder item can also accept a function as an argument, and its returned value will be used as the item for that slot. Example:
+
+```js
+const inventory = new InventoryBuilder(1, "Test", {
+    0: new ItemBuilder("APPLE"),
+    1: () => {
+        if(Math.random() < 0.5) return new ItemBuilder("DIAMOND");
+        return new ItemBuilder("COAL");
+    }
+});
+```
+
 # How to use GUIManager
 
 There are 7 methods that can be used on the GUIManager object. These are:
@@ -123,7 +137,7 @@ There are 7 methods that can be used on the GUIManager object. These are:
 
 `setGlobalAction(action)` - sets the global action that will be executed any time a player performs an ItemUtils GUI action.
 
-`createViewFromTemplate(id, name, items)` - creates an inventory from a GUI template, which was declared in the ItemUtils config. **This method will only become available once the `templates` field is created in the ItemUtils config** *(plugins/Drupi/ItemUtils.yml)*
+`createViewFromTemplate(id, name, items)` - creates an inventory from a GUI template, which was declared in the ItemUtils config.
 
 ## ItemUtils divides its GUIs into two types:
 
@@ -239,3 +253,26 @@ command.create("test", "test", sender => {
     });
 });
 ```
+
+## GUI Templates
+
+GUIManager can create inventories views from predefined templates. Templates are stored in the `plugins/Drupi/ItemUtils.yml` directory. Let's create an example template that will alternate between iron and gold blocks across 3 inventory rows:
+
+```yml
+templates:
+    ores:
+        - ABABABABA
+        - BABABABAB
+        - ABABABABA
+```
+
+Right now, the server does not know what items to actually place in slots A and B, so it will use air by default. The amout of inventory rows is automatically determined by how many rows you add to the list. Now, let's make slot `A` bound to `IRON_INGOT` and slot `B` bound to `GOLD_INGOT`.
+
+```js
+const inventory = GUIManager.createViewFromTemplate("ores", "Test Inventory", {
+    A: new ItemBuilder("IRON_INGOT"),
+    B: new ItemBuilder("GOLD_INGOT")
+});
+```
+
+We have now created an inventory that alternates between iron and gold ingots with barely any code at all.
