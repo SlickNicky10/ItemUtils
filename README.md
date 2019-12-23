@@ -256,7 +256,7 @@ command.create("test", "test", sender => {
 
 ## GUI Templates
 
-GUIManager can create inventories views from predefined templates. Templates are stored in the `plugins/Drupi/ItemUtils.yml` directory. Let's create an example template that will alternate between iron and gold blocks across 3 inventory rows:
+GUIManager can create inventory views from predefined templates. Templates are stored in the `plugins/Drupi/ItemUtils.yml` file. Let's create an example template that will alternate between iron and gold blocks across 3 inventory rows:
 
 ```yml
 templates:
