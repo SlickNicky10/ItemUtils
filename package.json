@@ -1,0 +1,13 @@
+{
+    "name": "ItemUtils",
+    "version": "1.0",
+    "description": "A module for creating items, inventories and interactive menus!",
+    "main": "index.js",
+    "author": "SlickNicky10",
+    "tags": [],
+    "dependencies": [],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/SlickNicky10/ItemUtils"
+    }
+}
