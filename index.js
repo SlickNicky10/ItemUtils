@@ -198,7 +198,7 @@
         GUIManager: GUIManager
     };
     event.addListener("InventoryCloseEvent", event => {
-        if(GUIManager.players[event.getPlayer().getUniqueId()].guiOptions.inventoryCloseEvent != null){
+        if(GUIManager.players[event.getPlayer().getUniqueId()] && GUIManager.players[event.getPlayer().getUniqueId()].guiOptions && GUIManager.players[event.getPlayer().getUniqueId()].guiOptions.inventoryCloseEvent != null){
             GUIManager.players[event.getPlayer().getUniqueId()].guiOptions.inventoryCloseEvent();
         }
         if(GUIManager.players[event.getPlayer().getUniqueId()] && GUIManager.players[event.getPlayer().getUniqueId()].transfer == true){
