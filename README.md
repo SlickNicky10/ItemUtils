@@ -1,7 +1,7 @@
 # ItemUtils
 ItemUtils module for use with Drupi. Download Drupi at https://stacket.net/drupi
 
-The current latest version of ItemUtils is **1.0**, and this documentation will always be in reference to the latest version of ItemUtils.
+The current latest version of ItemUtils is **1.0.1**, and this documentation will always be in reference to the latest version of ItemUtils.
 
 # What's ItemUtils?
 ItemUtils is a Drupi module that makes creating items and interactive GUIs fast and easy. ItemUtils can be used for simple things, like making it easier to give a player an item, or to create a deep system of interactive inventories. The possibilities are limitless!
@@ -222,6 +222,10 @@ When the script is loaded, our shop GUI is created, and all the command has to d
 ## GUI Options
 
 ItemUtils GUIs can have additional options declared after declaring the GUI actions. These are:
+
+**closeAction**: A function that will be executed when a player closes the GUI.
+Parameters:
+- event *([InventoryCloseEvent](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/inventory/InventoryCloseEvent.html))*
 
 **globalAction**: A function that will be executed regardless of what GUI slot is clicked.
 

@@ -1,5 +1,5 @@
 // ItemUtils by SlickNicky10
-// Version: 1.0
+// Version: 1.0.1
 // Github: https://github.com/SlickNicky10/ItemUtils
 (function(){
     const GUIManager = {
@@ -10,10 +10,11 @@
             const transfer = this.isViewingGUI(player);
             if(!options) options = {};
             this.players[uuid] = {
-                guiType: "TEMPORARY",
+                type: "TEMPORARY",
                 inGUI: true,
-                guiActions: actions,
-                guiOptions: {
+                actions: actions,
+                options: {
+                    closeAction: options.closeAction ? options.closeAction : null,
                     globalAction: options.globalAction ? options.globalAction : null,
                     extraAction: options.extraAction ? options.extraAction : null,
                     fallbackAction: options.fallbackAction ? options.fallbackAction : null
@@ -36,32 +37,32 @@
                     java.lang.System.out.println(`[GUIManager] An error occurred while triggering your global GUI action. This error will likely happen every time a player interacts with your GUIs!\nError:\n${e}`);
                 }
             }
-            if(data.guiType == "TEMPORARY"){
-                if(data.guiOptions.globalAction != null){
+            if(data.type == "TEMPORARY"){
+                if(data.options.globalAction != null){
                     try {
-                        data.guiOptions.globalAction(event);
+                        data.options.globalAction(event);
                     } catch(e){
                         java.lang.System.out.println("[GUIManager] An error occurred while triggering a global GUI action for "+player.getName()+". Error:\n"+e);
                     }
                 }
-                if(data.guiActions[event.getRawSlot()]){
+                if(data.actions[event.getRawSlot()]){
                     try {
-                        data.guiActions[event.getRawSlot()](event);
+                        data.actions[event.getRawSlot()](event);
                     } catch(e){
                         java.lang.System.out.println("[GUIManager] An error occurred while triggering a GUI action for "+player.getName()+". Error:\n"+e);
                     }
-                    if(data.guiOptions.extraAction != null){
+                    if(data.options.extraAction != null){
                         try {
-                            data.guiOptions.extraAction(event);
+                            data.options.extraAction(event);
                         } catch(e){
                             java.lang.System.out.println("[GUIManager] An error occurred while triggering an extra action for "+player.getName()+". Error:\n"+e);
                         }
                     }
                 } else {
-                    if(data.guiOptions.fallbackAction != null) data.guiOptions.fallbackAction(event);
+                    if(data.options.fallbackAction != null) data.options.fallbackAction(event);
                 }
             } else {
-                const id = GUIManager.players[uuid].guiID;
+                const id = GUIManager.players[uuid].id;
                 if(!GUIManager.globalMenus[id]) return;
                 const gui = GUIManager.globalMenus[id];
                 if(gui.options.globalAction != null){
@@ -95,14 +96,19 @@
             this.globalMenus[id] = {
                 view: view,
                 actions: actions,
-                options: options
+                options: {
+                    closeAction: options.closeAction ? options.closeAction : null,
+                    globalAction: options.globalAction ? options.globalAction : null,
+                    extraAction: options.extraAction ? options.extraAction : null,
+                    fallbackAction: options.fallbackAction ? options.fallbackAction : null
+                }
             }
         },
         deleteGlobalMenu: function(id){
             const players = server.getOnlinePlayers();
             for(var i in players){
                 const player = players[i];
-                if(this.players[player.getUniqueId()] && this.players[player.getUniqueId()].guiType == "GLOBAL" && this.players[player.getUniqueId()].guiID == id && this.isViewingGUI(player)){
+                if(this.players[player.getUniqueId()] && this.players[player.getUniqueId()].type == "GLOBAL" && this.players[player.getUniqueId()].id == id && this.isViewingGUI(player)){
                     player.closeInventory();
                 }
             }
@@ -112,8 +118,8 @@
             if(!player || !id) return;
             const transfer = this.isViewingGUI(player);
             this.players[player.getUniqueId()] = {
-                guiType: "GLOBAL",
-                guiID: id,
+                type: "GLOBAL",
+                id: id,
                 inGUI: true,
                 transfer: transfer
             };
@@ -197,6 +203,14 @@
         GUIManager: GUIManager
     };
     event.addListener("InventoryCloseEvent", event => {
+        if(GUIManager.players[event.getPlayer().getUniqueId()]){
+            var GUI = GUIManager.players[event.getPlayer().getUniqueId()];
+            if(GUI.type == "TEMPORARY" && GUI.options && GUI.options.closeAction != null){
+                GUI.options.closeAction(event);
+            } else if(GUI.type == "GLOBAL" && GUI.id && GUIManager.globalMenus[GUI.id] && GUIManager.globalMenus[GUI.id].options.closeAction != null){
+                GUIManager.globalMenus[GUI.id].options.closeAction(event);
+            }
+        }
         if(GUIManager.players[event.getPlayer().getUniqueId()] && GUIManager.players[event.getPlayer().getUniqueId()].transfer == true){
             GUIManager.players[event.getPlayer().getUniqueId()].transfer = false;
         } else {
