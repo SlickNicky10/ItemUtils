@@ -229,8 +229,6 @@ Parameters:
 
 **globalAction**: A function that will be executed regardless of what GUI slot is clicked.
 
-**globalAction**: A function that will be executed regardless of what GUI slot is clicked.
-
 **extraAction**: A function that will be executed after the clicked GUI slot's defined action is executed. Will only be called if that slot has an action declared.
 
 **fallbackAction**: A function that will be executed if the clicked GUI slot does not have an action defined.
