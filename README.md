@@ -1,7 +1,7 @@
 # ItemUtils
 ItemUtils module for use with Drupi. Download Drupi at https://stacket.net/drupi
 
-The current latest version of ItemUtils is **1.0**, and this documentation will always be in reference to the latest version of ItemUtils.
+The current latest version of ItemUtils is **1.0.1**, and this documentation will always be in reference to the latest version of ItemUtils.
 
 # What's ItemUtils?
 ItemUtils is a Drupi module that makes creating items and interactive GUIs fast and easy. ItemUtils can be used for simple things, like making it easier to give a player an item, or to create a deep system of interactive inventories. The possibilities are limitless!
