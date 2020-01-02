@@ -14,7 +14,7 @@
                 inGUI: true,
                 guiActions: actions,
                 guiOptions: {
-                    inventoryCloseEvent: options.inventoryCloseEvent ? options.inventoryCloseEvent : null,
+                    closeAction: options.closeAction ? options.closeAction : null,
                     globalAction: options.globalAction ? options.globalAction : null,
                     extraAction: options.extraAction ? options.extraAction : null,
                     fallbackAction: options.fallbackAction ? options.fallbackAction : null
@@ -198,8 +198,8 @@
         GUIManager: GUIManager
     };
     event.addListener("InventoryCloseEvent", event => {
-        if(GUIManager.players[event.getPlayer().getUniqueId()] && GUIManager.players[event.getPlayer().getUniqueId()].guiOptions && GUIManager.players[event.getPlayer().getUniqueId()].guiOptions.inventoryCloseEvent != null){
-            GUIManager.players[event.getPlayer().getUniqueId()].guiOptions.inventoryCloseEvent();
+        if(GUIManager.players[event.getPlayer().getUniqueId()] && GUIManager.players[event.getPlayer().getUniqueId()].guiOptions && GUIManager.players[event.getPlayer().getUniqueId()].guiOptions.closeAction != null){
+            GUIManager.players[event.getPlayer().getUniqueId()].guiOptions.closeAction();
         }
         if(GUIManager.players[event.getPlayer().getUniqueId()] && GUIManager.players[event.getPlayer().getUniqueId()].transfer == true){
             GUIManager.players[event.getPlayer().getUniqueId()].transfer = false;
