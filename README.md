@@ -225,7 +225,7 @@ ItemUtils GUIs can have additional options declared after declaring the GUI acti
 
 **closeAction**: A function that will be executed when a player closes a GUI.
 Parameters:
-- event *[InventoryCloseEvent](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/inventory/InventoryCloseEvent.html)*
+- event *([InventoryCloseEvent](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/inventory/InventoryCloseEvent.html))*
 
 **globalAction**: A function that will be executed regardless of what GUI slot is clicked.
 
