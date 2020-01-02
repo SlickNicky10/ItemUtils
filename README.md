@@ -223,7 +223,7 @@ When the script is loaded, our shop GUI is created, and all the command has to d
 
 ItemUtils GUIs can have additional options declared after declaring the GUI actions. These are:
 
-**closeAction**: A function that will be executed when a player closes a GUI.
+**closeAction**: A function that will be executed when a player closes the GUI.
 Parameters:
 - event *([InventoryCloseEvent](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/inventory/InventoryCloseEvent.html))*
 
