@@ -31,6 +31,8 @@ There are 4 parameters that can be passed to the ItemBuilder constructor. These 
 
     potion - options for creating custom potions, see the Creating Potions section.
 
+    unbreakable (boolean, default false) - whether this item should be unbreakable or not.
+
 Let's start out simple, and create a diamond sword named "OP Sword", with lore.
 
 ```js
