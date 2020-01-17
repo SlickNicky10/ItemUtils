@@ -1,7 +1,7 @@
 # ItemUtils
 ItemUtils module for use with Drupi. Download Drupi at https://stacket.net/drupi
 
-The current latest version of ItemUtils is **1.0.1**, and this documentation will always be in reference to the latest version of ItemUtils.
+The current latest version of ItemUtils is **1.1**, and this documentation will always be in reference to the latest version of ItemUtils.
 
 # What's ItemUtils?
 ItemUtils is a Drupi module that makes creating items and interactive GUIs fast and easy. ItemUtils can be used for simple things, like making it easier to give a player an item, or to create a deep system of interactive inventories. The possibilities are limitless!
@@ -28,6 +28,8 @@ There are 4 parameters that can be passed to the ItemBuilder constructor. These 
     enchantments (array) - an array containing enchantments to apply to the item. Covered in more detail later.
   
     flags (array) - an array containing item flags to apply to the item. Covered in more detail later.
+
+    potion - options for creating custom potions, see the Creating Potions section.
 
 Let's start out simple, and create a diamond sword named "OP Sword", with lore.
 
@@ -77,6 +79,65 @@ const item = new ItemBuilder("DIAMOND_SWORD", "OP Sword", [color("&aA very stron
 ```
 
 A full list of item flags can be found here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemFlag.html
+
+## Creating potions *(New in ItemUtils 1.1)*
+
+ItemBuilder can be used to create custom potions, with fully customizable effects. This is done using the `potion` option, which has the following properties:
+
+`splash` *(boolean) (optional, default: false)* - declares whether this potion should be a splash potion or not. **This option will only take effect on servers running Spigot 1.12.2 or earlier. For Spigot 1.13 and above, use `SPLASH_POTION` or `LINGERING_POTION` as needed as your material type.**
+
+`effects` *(array)* - an array containing potion effects and their properties. These properties are:
+
+    type (string or PotionEffectType) - type of this potion effect
+
+    duration (int) (optional, default 600) - duration of the potion effect (in ticks)
+
+    amplifier (int) (optional, default 0) - amplifier of the potion effect
+
+    ambient (boolean) (optional, default false) - adjusts the translucency of the potion effect's particles, such as from a beacon
+
+    particles (boolean) (optional, default true) - toggles whether the potion effect should include particles or not
+
+    icon (boolean) (optional, defaults to use the same value as particles) - toggles whether the potion effect should have an icon or not. This option will only take effect on servers running Spigot 1.13 or newer.
+
+For example, let's create a "Rabbit Potion" that grants Speed 3 and Jump Boost 5.
+
+```js
+const item = new ItemBuilder("POTION", color("&9Rabbit Potion"), null, {potion: {
+    effects: [
+        {type: "SPEED", duration: 3600, amplifier: 2},
+        {type: "JUMP", duration: 3600, amplifier: 4}
+    ]
+}});
+```
+
+A complete list of potion effect types is available *([here](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionEffectType.html))*.
+
+## ItemBuilder custom options *(New in ItemUtils 1.1)*
+
+Drupi scripts can register custom options for the `options` parameter of the ItemBuilder constructor, using the `ItemUtils.registerItemBuilderCustomOption` method.
+
+Usage: `ItemUtils.registerItemBuilderCustomOption(key, callback)`
+
+Let's create a `shiny` option, that when set to `true`, will apply the Infinity enchantment to the item, and then hide all enchants.
+
+```js
+const ItemUtils = require("ItemUtils");
+ItemUtils.registerItemBuilderCustomOption("shiny", (item, value) => {
+    if(value == true){
+        item.addUnsafeEnchantment(org.bukkit.enchantments.Enchantment.ARROW_INFINITE, 1);
+        const meta = item.getItemMeta();
+        meta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ENCHANTS);
+        item.setItemMeta(meta);
+        return item;
+    } else return item;
+});
+```
+Now, we can create a "shiny" item using the ItemBuilder constructor.
+
+```js
+const item = new ItemBuilder("APPLE", "Shiny Apple", null, {shiny: true});
+```
 
 # How to use InventoryBuilder
 

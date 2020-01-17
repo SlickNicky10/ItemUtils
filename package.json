@@ -1,6 +1,6 @@
 {
     "name": "ItemUtils",
-    "version": "1.0.1",
+    "version": "1.1",
     "description": "A module for creating items, inventories and interactive menus!",
     "main": "index.js",
     "author": "SlickNicky10",

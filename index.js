@@ -1,7 +1,8 @@
 // ItemUtils by SlickNicky10
-// Version: 1.0.1
+// Version: 1.1
 // Github: https://github.com/SlickNicky10/ItemUtils
 (function(){
+    const serverVersion = server.getClass().getPackage().getName().split(".")[3].split("_")[1];
     const GUIManager = {
         players: {},
         globalMenus: {},
@@ -34,7 +35,8 @@
                 try {
                     this.globalAction(event);
                 } catch(e){
-                    java.lang.System.out.println(`[GUIManager] An error occurred while triggering your global GUI action. This error will likely happen every time a player interacts with your GUIs!\nError:\n${e}`);
+                    java.lang.System.out.println(`[GUIManager] An error occurred while triggering your global GUI action. This error will likely happen every time a player interacts with your GUIs!`);
+                    e.printStackTrace();
                 }
             }
             if(data.type == "TEMPORARY"){
@@ -42,20 +44,23 @@
                     try {
                         data.options.globalAction(event);
                     } catch(e){
-                        java.lang.System.out.println("[GUIManager] An error occurred while triggering a global GUI action for "+player.getName()+". Error:\n"+e);
+                        java.lang.System.out.println("[GUIManager] An error occurred while triggering a global GUI action for "+player.getName()+".");
+                        e.printStackTrace();
                     }
                 }
                 if(data.actions[event.getRawSlot()]){
                     try {
                         data.actions[event.getRawSlot()](event);
                     } catch(e){
-                        java.lang.System.out.println("[GUIManager] An error occurred while triggering a GUI action for "+player.getName()+". Error:\n"+e);
+                        java.lang.System.out.println("[GUIManager] An error occurred while triggering a GUI action for "+player.getName()+".");
+                        e.printStackTrace();
                     }
                     if(data.options.extraAction != null){
                         try {
                             data.options.extraAction(event);
                         } catch(e){
-                            java.lang.System.out.println("[GUIManager] An error occurred while triggering an extra action for "+player.getName()+". Error:\n"+e);
+                            java.lang.System.out.println("[GUIManager] An error occurred while triggering an extra action for "+player.getName()+".");
+                            e.printStackTrace();
                         }
                     }
                 } else {
@@ -69,20 +74,23 @@
                     try {
                         gui.options.globalAction(event);
                     } catch(e){
-                        java.lang.System.out.println("[GUIManager] An error occurred while triggering a global GUI action for a global GUI for "+player.getName()+". Error:\n"+e);
+                        java.lang.System.out.println("[GUIManager] An error occurred while triggering a global GUI action for a global GUI for "+player.getName()+".");
+                        e.printStackTrace();
                     }
                 }
                 if(gui.actions[event.getRawSlot()]){
                     try {
                         gui.actions[event.getRawSlot()](event);
                     } catch(e){
-                        java.lang.System.out.println("[GUIManager] An error occurred while triggering a GUI action for a global GUI for "+player.getName()+". Error:\n"+e);
+                        java.lang.System.out.println("[GUIManager] An error occurred while triggering a GUI action for a global GUI for "+player.getName()+".");
+                        e.printStackTrace();
                     }
                     if(gui.options.extraAction != null){
                         try {
                             gui.options.extraAction(event);
                         } catch(e){
-                            java.lang.System.out.println("[GUIManager] An error occurred while triggering a GUI action for an extra action for a global GUI for "+player.getName()+". Error:\n"+e);
+                            java.lang.System.out.println("[GUIManager] An error occurred while triggering a GUI action for an extra action for a global GUI for "+player.getName()+".");
+                            e.printStackTrace();
                         }
                     }
                 } else {
@@ -156,11 +164,12 @@
             return new InventoryBuilder(3, name, {});
         }
     }
+    const itemBuilderCustomOptions = {};
     module.exports = {
         ItemBuilder: (material, name, lore, options) => {
             if(!options) var options = {};
             var material = (typeof material === "string") ? Java.type("org.bukkit.Material").valueOf(material) : material;
-            const build = new org.bukkit.inventory.ItemStack(material);
+            let build = new org.bukkit.inventory.ItemStack(material);
             if(options.amount) build.setAmount(options.amount);
             if(options.durability) build.setDurability(options.durability);
             if(options.enchantments){
@@ -171,16 +180,44 @@
                             const level = (i.level != null) ? i.level : 1;
                             build.addUnsafeEnchantment(enchantment, level);
                         } catch(err){
-                            logger.info(err);
+                            err.printStackTrace();
                         };
                     });
                 } catch(e){};
             }
-            const meta = build.getItemMeta();
+            let meta = build.getItemMeta();
             if(name) meta.setDisplayName(name);
             if(lore) meta.setLore(lore);
             if(options.flags) options.flags.forEach(flag => meta.addItemFlags(Java.type("org.bukkit.inventory.ItemFlag").valueOf(flag)));
+            if(options.unbreakable) meta.setUnbreakable(options.unbreakable);
+            // Terrible way to check if the item is a potion, but it's for support for splash/lingering potions on 1.15 without
+            // breaking things for 1.8 users :)
+            if(options.potion && material.toString().toLowerCase().indexOf("potion") > -1){
+                const useSplashOption = (serverVersion != "13" && serverVersion != "14" && serverVersion != "15") ? true : false;
+                if(useSplashOption) build.setDurability((options.potion.splash) ? 16454 : 16);
+                meta = cast.as("org.bukkit.inventory.meta.PotionMeta", meta);
+                options.potion.effects.forEach(effect => {
+                    const type = (typeof effect.type == "string") ? org.bukkit.potion.PotionEffectType[effect.type] : effect.type;
+                    if(effect.duration == null) effect.duration = 600;
+                    if(effect.amplifier == null) effect.amplifier = 0;
+                    if(!effect.ambient) effect.ambient = false;
+                    if(effect.particles == null) effect.particles = true;
+                    switch(serverVersion){
+                        case "13":
+                        case "14":
+                        case "15":
+                            if(effect.icon == null) effect.icon = effect.particles;
+                            meta.addCustomEffect(new org.bukkit.potion.PotionEffect(type, effect.duration, effect.amplifier, effect.ambient, effect.particles, effect.icon), true);
+                            break;
+                        default:
+                            meta.addCustomEffect(new org.bukkit.potion.PotionEffect(type, effect.duration, effect.amplifier, effect.ambient, effect.particles), true);
+                    }
+                });
+            }
             build.setItemMeta(meta);
+            for(let i in itemBuilderCustomOptions){
+                if(options[i]) build = itemBuilderCustomOptions[i](build, options[i]);
+            }
             return build;
         },
         InventoryBuilder: (rows, name, items, defaultItem) => {
@@ -200,7 +237,11 @@
             }
             return inventory;
         },
-        GUIManager: GUIManager
+        GUIManager: GUIManager,
+        registerItemBuilderCustomOption: (key, callback) => {
+            itemBuilderCustomOptions[key] = callback;
+            java.lang.System.out.println(`[ItemUtils] Custom ItemBuilder option ${key} has been registered successfully.`);
+        }
     };
     event.addListener("InventoryCloseEvent", event => {
         if(GUIManager.players[event.getPlayer().getUniqueId()]){
