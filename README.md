@@ -7,7 +7,7 @@ The current latest version of ItemUtils is **1.1**, and this documentation will 
 ItemUtils is a Drupi module that makes creating items and interactive GUIs fast and easy. ItemUtils can be used for simple things, like making it easier to give a player an item, or to create a deep system of interactive inventories. The possibilities are limitless!
 
 # Install Guide
-Firstly, make sure that `Drupi` is installed on your server. If it isn't, you can download it from https://stacket.net/drupi. Once Drupi is installed, restart your server and execute the command `/drupi install ItemUtils`. You can now use TaskUtils in your Drupi scripts!
+Firstly, make sure that `Drupi` is installed on your server. If it isn't, you can download it from https://stacket.net/drupi. Once Drupi is installed, restart your server and execute the command `/drupi install ItemUtils`. You can now use ItemUtils in your Drupi scripts!
 
 # How to use ItemBuilder
 
